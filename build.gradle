@@ -1,0 +1,130 @@
+plugins {
+    id 'groovy'
+    id 'java-library'
+    id 'maven-publish'
+    id 'org.jreleaser' version '1.9.0'
+}
+
+group 'es.edn'
+
+
+repositories {
+    // Use Maven Central for resolving dependencies.
+    mavenCentral()
+}
+
+dependencies {
+    // Use the latest Groovy version for building this library
+    compileOnly group: 'org.apache.groovy', name: 'groovy-all', version: '4.0.13'
+
+
+    implementation 'com.google.api-client:google-api-client:1.35.2'
+    implementation 'com.google.oauth-client:google-oauth-client-jetty:1.34.1'
+    implementation 'com.google.auth:google-auth-library-credentials:1.20.0'
+    implementation 'com.google.auth:google-auth-library-oauth2-http:1.20.0'
+
+    implementation "com.google.apis:google-api-services-drive:v3-rev197-1.25.0"
+    implementation "com.google.apis:google-api-services-sheets:v4-rev612-1.25.0"
+
+    // Use the awesome Spock testing and specification framework even with Java
+    testImplementation 'org.spockframework:spock-core:2.2-groovy-3.0'
+    testImplementation 'junit:junit:4.13.2'
+
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+
+// Apply a specific Java toolchain to ease working on different environments.
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+    withJavadocJar()
+    withSourcesJar()
+}
+
+tasks.named('test') {
+    // Use JUnit Platform for unit tests.
+    useJUnitPlatform()
+}
+
+tasks.jar{
+    enabled = true
+    // Remove `plain` postfix from jar file name
+    archiveClassifier = ""
+}
+
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = "es.edn"
+            artifactId = "groogle"
+
+            from components.java
+
+            pom {
+                name = 'groogle'
+                description = 'Groovy DSL for Google'
+                url = 'https://github.com/edn-es/groogle'
+                inceptionYear = '2021'
+                licenses {
+                    license {
+                        name = 'Apache-2.0'
+                        url = 'https://spdx.org/licenses/Apache-2.0.html'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'jagedn'
+                        name = 'Jorge Aguilera'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:https://github.com/edn-es/groogle.git'
+                    developerConnection = 'scm:git:ssh://github.com/edn-es/groogle.git'
+                    url = 'http://github.com/groogle/edn-es'
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            url = layout.buildDirectory.dir('staging-deploy')
+        }
+    }
+}
+
+jreleaser {
+
+    project {
+        authors = ['Jorge Aguilera']
+        license = 'Apache-2.0'
+        links {
+            homepage = 'https://edn-es.github.io/groogle'
+        }
+        inceptionYear = '2021'
+        description 'A Groovy DSL for Google Services'
+    }
+
+    gitRootSearch = true
+    signing {
+        active = 'ALWAYS'
+        armored = true
+    }
+
+    deploy {
+        maven {
+            nexus2 {
+                create("maven-central") {
+                    active = 'ALWAYS'
+                    url = "https://s01.oss.sonatype.org/service/local"
+                    closeRepository = false
+                    releaseRepository = false
+                    stagingRepositories.add("build/staging-deploy")
+                }
+            }
+        }
+    }
+}
