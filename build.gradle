@@ -2,6 +2,7 @@ plugins {
     id 'groovy'
     id 'java-library'
     id 'maven-publish'
+    id 'org.asciidoctor.jvm.convert'
     id 'org.jreleaser' version '1.9.0'
 }
 
@@ -120,8 +121,8 @@ jreleaser {
                 create("maven-central") {
                     active = 'ALWAYS'
                     url = "https://s01.oss.sonatype.org/service/local"
-                    closeRepository = false
-                    releaseRepository = false
+                    closeRepository = true
+                    releaseRepository = true
                     stagingRepositories.add("build/staging-deploy")
                 }
             }

@@ -1,0 +1,7 @@
+= Groogle: a Groovy DSL for Google
+Jorge Aguilera <jorge@edn.es>
+v0.0.1
+:toc: left
+
+Groogle is a DSL for Google Cloud Services (as Drive or Sheet)
+
