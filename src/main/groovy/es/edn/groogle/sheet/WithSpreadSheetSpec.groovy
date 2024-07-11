@@ -39,7 +39,7 @@ class WithSpreadSheetSpec implements SheetService.WithSpreadSheet{
     WithSheet findSheet(String name) {
         Sheet sheet = spreadsheet.getSheets().find{ it.getProperties().title == name}
         assert sheet
-        new WithSheetSpec(withSpreadSheetSpec: this, id:sheet.getProperties().getSheetId(), sheetName: name)
+        new WithSheetSpec(withSpreadSheetSpec: this, id:sheet.getProperties().getSheetId(), sheetName: name, sheet:sheet)
     }
 
     @Override

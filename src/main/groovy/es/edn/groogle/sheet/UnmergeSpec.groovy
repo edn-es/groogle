@@ -9,6 +9,7 @@ class UnmergeSpec implements SheetService.Unmerge{
 
     WithSpreadSheetSpec withSpreadSheetSpec
     int id
+    boolean toMerge
 
     Integer startRowIndex = null
     Integer startColIndex = null
@@ -50,8 +51,14 @@ class UnmergeSpec implements SheetService.Unmerge{
         if( endColIndex)
             gridRange.endColumnIndex = endColIndex
 
-        UnmergeCellsRequest unmergeCellsRequest = new UnmergeCellsRequest(range:gridRange)
-        Request request = new Request(unmergeCells: unmergeCellsRequest)
+        Request request
+        if( toMerge ){
+            MergeCellsRequest mergeCellsRequest = new MergeCellsRequest(range:gridRange)
+            request = new Request(mergeCells: mergeCellsRequest)
+        }else{
+            UnmergeCellsRequest unmergeCellsRequest = new UnmergeCellsRequest(range:gridRange)
+            request = new Request(unmergeCells: unmergeCellsRequest)
+        }
         BatchUpdateSpreadsheetRequest batchUpdateSpreadsheetRequest = new BatchUpdateSpreadsheetRequest(requests: [request])
         BatchUpdateSpreadsheetResponse response = withSpreadSheetSpec.service.spreadsheets()
                 .batchUpdate(withSpreadSheetSpec.id, batchUpdateSpreadsheetRequest)

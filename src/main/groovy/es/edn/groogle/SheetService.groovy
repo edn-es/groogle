@@ -18,6 +18,8 @@ interface SheetService extends Groogle.GroogleService{
 
         List<List<Object>> get()
 
+        List<List<Object>> getValues()
+
         Range set(List<List<Object>> values)
 
     }
@@ -54,6 +56,15 @@ interface SheetService extends Groogle.GroogleService{
     }
 
     interface Unmerge extends Coordinates{
+    }
+
+    interface Merge extends Coordinates{
+    }
+
+    interface Lock extends Coordinates{
+        Lock name(String name)
+        Lock allowUser(String name)
+        Lock except(@DelegatesTo(Coordinates) Closure excludeRange)
     }
 
     interface WithSheet{
@@ -105,7 +116,12 @@ interface SheetService extends Groogle.GroogleService{
 
         WithSheet borders(@DelegatesTo(value=Borders, strategy = Closure.DELEGATE_FIRST)Closure closure)
 
+        WithSheet merge(@DelegatesTo(value=Merge, strategy = Closure.DELEGATE_FIRST)Closure closure)
+
         WithSheet unmerge(@DelegatesTo(value=Unmerge, strategy = Closure.DELEGATE_FIRST)Closure closure)
+
+        WithSheet lock(@DelegatesTo(value=Lock, strategy = Closure.DELEGATE_FIRST)Closure closure)
+
     }
 
     interface WithSpreadSheet {

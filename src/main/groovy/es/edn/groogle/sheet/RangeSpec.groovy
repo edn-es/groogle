@@ -34,6 +34,15 @@ class RangeSpec implements SheetService.Range{
     }
 
     @Override
+    List<List<Object>> getValues() {
+        withSpreadSheetSpec.service.spreadsheets()
+                .values().get(withSpreadSheetSpec.id,"$sheetName!$from:$to")
+                .setMajorDimension('ROWS')
+                .setValueRenderOption('FORMATTED_VALUE')
+                .execute().getValues()
+    }
+
+    @Override
     SheetService.Range set(List<List<Object>> values) {
         ValueRange valueRange = new ValueRange(range:"$sheetName!$from:$to",
                 majorDimension:'ROWS',

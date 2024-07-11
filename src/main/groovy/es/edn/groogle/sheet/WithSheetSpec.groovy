@@ -3,6 +3,7 @@ package es.edn.groogle.sheet
 import com.google.api.services.sheets.v4.model.DimensionProperties
 import com.google.api.services.sheets.v4.model.DimensionRange
 import com.google.api.services.sheets.v4.model.Request
+import com.google.api.services.sheets.v4.model.Sheet
 import com.google.api.services.sheets.v4.model.SheetProperties
 import com.google.api.services.sheets.v4.model.UpdateDimensionPropertiesRequest
 import com.google.api.services.sheets.v4.model.UpdateSheetPropertiesRequest
@@ -17,6 +18,7 @@ class WithSheetSpec implements SheetService.WithSheet{
     WithSpreadSheetSpec withSpreadSheetSpec
     int id
     String sheetName
+    Sheet sheet
 
     @Override
     SheetService.WithSheet duplicate(String name) {
@@ -221,11 +223,30 @@ class WithSheetSpec implements SheetService.WithSheet{
     }
 
     @Override
-    SheetService.WithSheet unmerge(@DelegatesTo(value= SheetService.Unmerge, strategy = Closure.DELEGATE_FIRST) Closure closure) {
-        UnmergeSpec spec = new UnmergeSpec(withSpreadSheetSpec: withSpreadSheetSpec, id: id)
+    SheetService.WithSheet merge(@DelegatesTo(value= SheetService.Merge, strategy = Closure.DELEGATE_FIRST) Closure closure) {
+        UnmergeSpec spec = new UnmergeSpec(withSpreadSheetSpec: withSpreadSheetSpec, id: id, toMerge: true)
         Closure clone = closure.rehydrate(spec, closure.thisObject, closure.owner)
         clone()
         spec.execute()
         this
     }
+
+    @Override
+    SheetService.WithSheet unmerge(@DelegatesTo(value= SheetService.Unmerge, strategy = Closure.DELEGATE_FIRST) Closure closure) {
+        UnmergeSpec spec = new UnmergeSpec(withSpreadSheetSpec: withSpreadSheetSpec, id: id, toMerge: false)
+        Closure clone = closure.rehydrate(spec, closure.thisObject, closure.owner)
+        clone()
+        spec.execute()
+        this
+    }
+
+    @Override
+    SheetService.WithSheet lock(@DelegatesTo(value= SheetService.Lock, strategy = Closure.DELEGATE_FIRST) Closure closure) {
+        LockSpec spec = new LockSpec(withSheetSpec: this, id: id)
+        Closure clone = closure.rehydrate(spec, closure.thisObject, closure.owner)
+        clone()
+        spec.execute()
+        this
+    }
+
 }
