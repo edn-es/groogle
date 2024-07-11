@@ -7,8 +7,9 @@
  *
  */
 
-package es.edn.groogle
+package es.edn.groogle.sheet
 
+import es.edn.groogle.SheetService
 import es.edn.groogle.sheet.GroovySheetService
 import groovy.transform.CompileStatic
 

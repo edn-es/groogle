@@ -9,8 +9,13 @@
 
 package es.edn.groogle.core
 
-
+import es.edn.groogle.DriveService
+import es.edn.groogle.GmailService
 import es.edn.groogle.Groogle
+import es.edn.groogle.SheetService
+import es.edn.groogle.drive.DriveServiceBuilder
+import es.edn.groogle.gmail.GmailServiceBuilder
+import es.edn.groogle.sheet.SheetServiceBuilder
 import groovy.transform.CompileStatic
 import groovy.transform.Synchronized
 
@@ -88,23 +93,25 @@ class GroovyGoogle implements Groogle{
     }
 
     Map<String,InternalService> services = [:]
-    Groogle service(GroogleService service, Class<? extends GroogleService> type){
-        register(service, type)
+
+    protected void registerServices(){
+        registerService( DriveServiceBuilder.build(), DriveService.name)
+        registerService( SheetServiceBuilder.build(), SheetService.name)
+        registerService( GmailServiceBuilder.build(), GmailService.name)
     }
 
-    @Override
-    Groogle register(GroogleService service, Class<? extends GroogleService> type) {
+    protected Groogle registerService(GroogleService service, String name) {
         assert service instanceof InternalService
-        InternalService internalService = service as InternalService;
-        assert services.containsKey(type.getName())==false;
-        services[type.getName()]=internalService
+        assert !services.containsKey(name);
+        services[name]=service
         this
     }
 
     @Override
-    def <T extends GroogleService> T service(Class<T> type){
-        T service  =(T)services.get(type.name)
+    <T extends GroogleService> T service(Class<T> type){
         login()
+        T service  =(T)services.get(type.getName())
+        assert service
         InternalService internalService = service as InternalService;
         internalService.configure(credentialsImpl.jsonFactory, credentialsImpl.httpTransport, credentialsImpl.credentials, credentialsImpl.applicationName )
         service
@@ -113,11 +120,12 @@ class GroovyGoogle implements Groogle{
     private boolean logged=false
 
     @Synchronized
-    public Groogle login() {
+    Groogle login() {
         if(!logged) {
             credentialsImpl.login();
             logged=true;
         }
+        registerServices()
         this
     }
 

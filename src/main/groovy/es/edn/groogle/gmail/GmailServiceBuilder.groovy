@@ -7,8 +7,9 @@
  *
  */
 
-package es.edn.groogle
+package es.edn.groogle.gmail
 
+import es.edn.groogle.GmailService
 import es.edn.groogle.gmail.GroovyGmailService
 import groovy.transform.CompileStatic
 
