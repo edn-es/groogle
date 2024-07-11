@@ -1,3 +1,12 @@
+/*
+ * Groogle, a Groovy Google DSL
+ *
+ * @author Jorge Aguilera <jorge@edn.es>
+ *
+ * Copyright (c) 2024.
+ *
+ */
+
 package es.edn.groogle.sheet
 
 import com.google.api.services.sheets.v4.model.DimensionProperties
