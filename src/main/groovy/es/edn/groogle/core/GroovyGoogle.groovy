@@ -102,7 +102,7 @@ class GroovyGoogle implements Groogle{
 
     protected Groogle registerService(GroogleService service, String name) {
         assert service instanceof InternalService
-        assert !services.containsKey(name);
+        assert !services.containsKey(name)
         services[name]=service
         this
     }
@@ -124,8 +124,8 @@ class GroovyGoogle implements Groogle{
         if(!logged) {
             credentialsImpl.login();
             logged=true;
+            registerServices()
         }
-        registerServices()
         this
     }
 

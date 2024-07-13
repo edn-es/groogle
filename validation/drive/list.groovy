@@ -16,8 +16,8 @@ import com.google.api.services.drive.DriveScopes
 @GrabConfig(systemClassLoader=true)
 groogle = GroogleBuilder.build {
     withOAuthCredentials {
-        applicationName 'test'
-        scopes DriveScopes.DRIVE, SheetsScopes.SPREADSHEETS
+        applicationName 'test-drive'
+        scopes DriveScopes.DRIVE
         usingCredentials "client_secret.json"
         storeCredentials true
     }
