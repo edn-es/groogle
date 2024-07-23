@@ -10,6 +10,7 @@
 package es.edn.groogle
 
 import com.google.api.services.gmail.model.Message
+import com.google.api.services.gmail.model.MessagePartHeader
 import groovy.transform.CompileStatic
 
 import java.util.function.Consumer
@@ -72,5 +73,7 @@ interface GmailService extends Groogle.GroogleService{
         WithMessage downloadAttachmentsIfExtension(String localPath, String extension)
         WithMessage delete()
         String getBody()
+        String getSubject()
+        List<MessagePartHeader> getHeaders()
     }
 }

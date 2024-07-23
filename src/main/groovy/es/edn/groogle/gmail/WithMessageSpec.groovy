@@ -12,6 +12,8 @@ package es.edn.groogle.gmail
 import com.google.api.client.util.IOUtils
 import com.google.api.services.gmail.Gmail
 import com.google.api.services.gmail.model.Message
+import com.google.api.services.gmail.model.MessagePart
+import com.google.api.services.gmail.model.MessagePartHeader
 import es.edn.groogle.GmailService
 import groovy.transform.CompileStatic
 
@@ -52,6 +54,23 @@ class WithMessageSpec implements GmailService.WithMessage{
     String getBody(){
         MimeMessage mimeMessage = getMimeMessage(userId, message.id as String)
         mimeMessage.content
+    }
+
+    private Message headers
+
+    @Override
+    String getSubject() {
+        getHeaders().find{ "subject" == it.get("name")?.toString()?.toLowerCase()}?.get("value")
+    }
+
+    @Override
+    List<MessagePartHeader> getHeaders() {
+        if( !headers ) {
+            headers = service.users().messages().get(userId, message.id as String).setFields("payload/headers").execute()
+        }
+        def payload = headers.get("payload") as MessagePart
+        def headers = payload.get("headers") as List<MessagePartHeader>
+        headers
     }
 
     MimeMessage getMimeMessage(String userId, String messageId)
