@@ -14,6 +14,9 @@ import com.google.api.services.gmail.Gmail
 import com.google.api.services.gmail.model.Message
 import com.google.api.services.gmail.model.MessagePart
 import com.google.api.services.gmail.model.MessagePartHeader
+import com.google.api.services.gmail.model.ModifyMessageRequest
+import com.google.api.services.gmail.model.ModifyThreadRequest
+import com.google.common.io.ByteStreams
 import es.edn.groogle.GmailService
 import groovy.transform.CompileStatic
 
@@ -21,6 +24,7 @@ import javax.activation.DataHandler
 import javax.mail.BodyPart
 import javax.mail.MessagingException
 import javax.mail.Multipart
+import javax.mail.Part
 import javax.mail.Session
 import javax.mail.internet.MimeMessage
 
@@ -49,11 +53,15 @@ class WithMessageSpec implements GmailService.WithMessage{
         this
     }
 
+    @Override
+    void markAsReaded() {
+        readed()
+    }
 
     @Override
-    String getBody(){
+    String getBody() {
         MimeMessage mimeMessage = getMimeMessage(userId, message.id as String)
-        mimeMessage.content
+        getPartText(mimeMessage)
     }
 
     private Message headers
@@ -113,12 +121,28 @@ class WithMessageSpec implements GmailService.WithMessage{
         File root = new File(path)
         root.mkdirs()
         messagesData(extension).each {DataHandler data->
-            File out = new File(root, data.name)
-            IOUtils.copy(data.inputStream, out.newObjectOutputStream())
+            FileOutputStream out = new FileOutputStream(new File(root, data.name))
+            ByteStreams.copy(data.inputStream, out)
+            out.close()
         }
     }
 
     void deleteMessage(){
         service.users().threads().delete(this.userId, message.id.toString()).execute()
+    }
+
+    String getPartText(Part p) throws MessagingException, IOException{
+        if( p.isMimeType("text/*"))
+            return p.content
+        if( p.isMimeType("multipart/*")){
+            var multipart = p.content as Multipart
+            return (0..multipart.count-1).collect {getPartText(multipart.getBodyPart(it))}.join("\n")
+        }
+        return null
+    }
+
+    void readed(){
+        ModifyMessageRequest request = new ModifyMessageRequest(removeLabelIds: ['UNREAD'])
+        service.users().messages().modify(this.userId, message.id.toString(), request).execute()
     }
 }

@@ -75,5 +75,6 @@ interface GmailService extends Groogle.GroogleService{
         String getBody()
         String getSubject()
         List<MessagePartHeader> getHeaders()
+        void markAsReaded()
     }
 }

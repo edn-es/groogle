@@ -3,8 +3,8 @@ plugins {
     id 'java-library'
     id 'application'
     id 'maven-publish'
-    id 'org.asciidoctor.jvm.convert'
     id 'org.jreleaser' version '1.13.1'
+    id 'org.antora' version '1.0.0'
 }
 
 group 'es.edn'
@@ -40,7 +40,7 @@ dependencies {
 // Apply a specific Java toolchain to ease working on different environments.
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(8)
     }
     withJavadocJar()
     withSourcesJar()
@@ -62,7 +62,7 @@ tasks.jar{
 }
 
 startScripts{
-    classpath  = files('$APP_HOME/libs/*:$GROOGLE_EXTRALIBS')
+
 }
 
 distributions {
@@ -163,4 +163,17 @@ jreleaser {
             }
         }
     }
+}
+
+
+antora {
+    version = '3.0.3'
+    options = [
+            clean: true,
+            fetch: true,
+            stacktrace: true,
+            attributes: [product: 'GroogleDSL']
+    ]
+    environment = [:]
+    packages = [:]
 }
