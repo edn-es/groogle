@@ -1,5 +1,5 @@
 name: main
 version: final
-title: nf-nomad
+title: Groogle
 nav:
   - modules/ROOT/nav.adoc
