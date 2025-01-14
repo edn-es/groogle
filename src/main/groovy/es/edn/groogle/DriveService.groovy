@@ -91,7 +91,7 @@ interface DriveService extends Groogle.GroogleService{
 
         FindFiles nameEq(String str)
 
-        FindFiles nameStartWith(String str)
+        FindFiles nameContains(String str)
 
         FindFiles parentId(String str)
     }

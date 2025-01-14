@@ -62,7 +62,7 @@ class FilterMessageSpec implements GmailService.FilterMessage{
     }
     @Override
     GmailService.FilterMessage body(String body){
-        filter.add "body:$body".toString()
+        filter.add "\"$body\"".toString()
         this
     }
 

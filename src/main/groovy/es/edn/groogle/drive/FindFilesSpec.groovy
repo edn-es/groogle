@@ -60,7 +60,7 @@ class FindFilesSpec implements DriveService.EachFile{
     }
 
     @Override
-    DriveService.FindFiles  nameStartWith(String str) {
+    DriveService.FindFiles nameContains(String str) {
         filters.add "name contains '$str'"
         this
     }
